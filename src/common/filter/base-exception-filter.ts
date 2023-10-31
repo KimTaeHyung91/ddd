@@ -4,18 +4,22 @@ import {
   ExceptionFilter,
   HttpException,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { BaseResponse } from '../response/base-response';
+import { HttpAdapterHost } from '@nestjs/core';
 
-@Catch(HttpException)
+@Catch()
 export class BaseExceptionFilter implements ExceptionFilter {
+  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
+
   catch(exception: HttpException, host: ArgumentsHost): any {
     const httpArgumentsHost = host.switchToHttp();
     const request = httpArgumentsHost.getRequest<Request>();
     if (request.url !== '/favicon.ico') {
-      const response = httpArgumentsHost.getResponse<Response>();
+      const { httpAdapter } = this.httpAdapterHost;
       const exceptionResponse = exception.getResponse();
-      response.json(
+      httpAdapter.reply(
+        httpArgumentsHost.getResponse(),
         BaseResponse.fail(
           exceptionResponse['message'],
           exceptionResponse['errorCode'],
