@@ -1,6 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { AppService } from './app.service';
-import { BaseResponse } from './base/response/base-response';
+import { BaseResponse } from './common/response/base-response';
+import { InvalidParameterRequestException } from './common/exception/invalid-parameter-request.exception';
 
 @Controller()
 export class AppController {
@@ -16,5 +17,19 @@ export class AppController {
   @Get('/fail/hello2')
   getHello2(): BaseResponse<any> {
     return BaseResponse.fail('fail', '404000');
+  }
+
+  @Get('/fail/hello2/:id')
+  getHello3(@Param('id') id: string): BaseResponse<any> {
+    if (+id === 2) {
+      throw new InvalidParameterRequestException(
+        `invalid parameter, id: ${id}`,
+        '400001',
+      );
+    }
+
+    return BaseResponse.success<{ text: string }>({
+      text: `${this.appService.getHello()}, id: ${id}`,
+    });
   }
 }
