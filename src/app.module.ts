@@ -8,6 +8,7 @@ import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { FlushMode, LoadStrategy } from '@mikro-orm/core';
 import { AopModule } from '@toss/nestjs-aop';
 import { TransactionalModule } from './common/transactional/transactional.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { TransactionalModule } from './common/transactional/transactional.module
       useFactory: (config: ConfigService) => {
         return {
           host: config.get('db.host'),
+          port: config.get('db.port'),
           user: config.get('db.user'),
           password: config.get('db.password'),
           dbName: config.get('db.database'),
@@ -33,6 +35,7 @@ import { TransactionalModule } from './common/transactional/transactional.module
     }),
     AopModule,
     TransactionalModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],

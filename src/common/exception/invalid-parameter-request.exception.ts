@@ -1,7 +1,8 @@
-import { HttpException } from '@nestjs/common';
+export class InvalidParameterRequestException extends Error {
+  readonly errorCode: string;
 
-export class InvalidParameterRequestException extends HttpException {
   constructor(message: string, errorCode: string) {
-    super({ message, errorCode }, 400);
+    super(`${InvalidParameterRequestException.name} ${message}`);
+    this.errorCode = errorCode;
   }
 }

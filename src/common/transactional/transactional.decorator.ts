@@ -6,10 +6,8 @@ import { EntityManager } from '@mikro-orm/core';
 export class TransactionalDecorator implements LazyDecorator<any> {
   constructor(private readonly em: EntityManager) {}
 
-  async wrap({
-    method,
-  }: WrapParams<(...args: any[]) => Promise<void>, unknown>): Promise<any> {
-    await method();
-    return async () => await this.em.flush();
+  wrap({ method }: WrapParams<any, unknown>): any {
+    return async (...args: any) =>
+      await this.em.transactional(async () => await method(...args));
   }
 }
