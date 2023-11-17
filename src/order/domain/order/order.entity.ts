@@ -8,8 +8,9 @@ import {
 } from '@mikro-orm/core';
 import { BaseEntity, Mutable } from '../../../common/entity/base.entity';
 import { DeliveryFragment } from './fragment/delivery.fragment';
-import { v4 as uuidV4 } from 'uuid';
-import { convert, LocalDateTime } from '@js-joda/core';
+import { LocalDateTime } from '@js-joda/core';
+import { RandomStringUtil } from '../../../common/util/random-string.util';
+import { DateUtil } from '../../../common/util/date.util';
 
 @Entity({ tableName: 'order' })
 @Index({ name: 'order_index1', properties: 'orderToken' })
@@ -19,7 +20,7 @@ export class OrderEntity extends BaseEntity<OrderEntity> {
   @PrimaryKey({ autoincrement: true })
   readonly id: number;
 
-  @Property()
+  @Property({ length: 32 })
   readonly orderToken: string;
 
   @Property({ type: 'timestamptz' })
@@ -40,9 +41,9 @@ export class OrderEntity extends BaseEntity<OrderEntity> {
   }
 
   static of(props: Omit<Partial<Mutable<OrderEntity>>, 'id'>) {
-    props.orderToken = uuidV4();
+    props.orderToken = RandomStringUtil.generate();
     props.status = OrderStatus.INIT;
-    props.orderDate = convert(LocalDateTime.now()).toDate();
+    props.orderDate = DateUtil.toJsDate(LocalDateTime.now());
 
     return new OrderEntity({
       orderToken: props.orderToken,
