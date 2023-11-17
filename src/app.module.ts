@@ -9,6 +9,7 @@ import { FlushMode, LoadStrategy } from '@mikro-orm/core';
 import { AopModule } from '@toss/nestjs-aop';
 import { TransactionalModule } from './common/transactional/transactional.module';
 import { OrderModule } from './order/order.module';
+import { PartnerModule } from './partner/partner.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { OrderModule } from './order/order.module';
     AopModule,
     TransactionalModule,
     OrderModule,
+    PartnerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
